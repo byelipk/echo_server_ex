@@ -17,8 +17,10 @@ defmodule Echo.Connection do
   @impl true
   def handle_info(message, state)
 
-  def handle_info({:tcp, _socket, data}, state) do
+  def handle_info({:tcp, socket, data}, state) do
     Logger.info("Received data: #{inspect(data)}")
+
+    :ok = :inet.setopts(socket, active: :once)
 
     state = update_in(state.buffer, &(&1 <> data))
     state = handle_new_data(state)

@@ -14,7 +14,7 @@ defmodule Echo.Acceptor do
 
     listen_options = [
       :binary,
-      active: true,
+      active: :once,
       # Do not link socket to process that creates it
       exit_on_close: false,
       # Run and shutdown server without worrying about unavailable ports
