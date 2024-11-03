@@ -13,14 +13,16 @@ defmodule Echo.Acceptor do
     port = Keyword.fetch!(init_args, :port)
 
     listen_options = [
-      :binary,
+      mode: :binary,
       active: :once,
       # Do not link socket to process that creates it
       exit_on_close: false,
       # Run and shutdown server without worrying about unavailable ports
       reuseaddr: true,
       # Accept queue size
-      backlog: 25
+      backlog: 25,
+      # Line mode means we automatically send/receive data in lines
+      packet: :line
     ]
 
     case :gen_tcp.listen(port, listen_options) do

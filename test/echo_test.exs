@@ -2,6 +2,7 @@ defmodule EchoTest do
   use ExUnit.Case
 
   describe "server" do
+
     test "sends back the received data" do
       {:ok, socket} = :gen_tcp.connect(~c"localhost", 4000, [:binary, active: false])
 
@@ -16,6 +17,9 @@ defmodule EchoTest do
 
       assert :ok = :gen_tcp.send(socket, "hello")
       assert :ok = :gen_tcp.send(socket, " world\nand one more line\n")
+
+      # Adding a sleep to cause more consistency in the test result
+      Process.sleep(25)
 
       assert {:ok, data} = :gen_tcp.recv(socket, 0, 500)
       assert "hello world\nand one more line\n" == data

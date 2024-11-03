@@ -41,21 +41,20 @@ defmodule Echo.Connection do
   end
 
   defp handle_new_data(state) do
-    case String.split(state.buffer, "\n", parts: 2) do
-      [line, rest] ->
-        Logger.info("Echoing line: #{inspect(line)}")
-
-        # Echo the line back to the client
-        :ok = :gen_tcp.send(state.socket, line <> "\n")
-
-        # Store the rest of the buffer we haven't echoed yet
-        state = put_in(state.buffer, rest)
-
-        # Recursively handle any more lines in the buffer
-        handle_new_data(state)
-
-      _other ->
+    # We're leverage the packet mode :line to automatically parse lines. This
+    # mean we can avoid parsing the lines ourselves.
+    case state.buffer do
+      "" ->
         state
+
+      buffer ->
+        Logger.info("Echoing buffer: #{inspect(buffer)}")
+
+        :ok = :gen_tcp.send(state.socket, buffer)
+
+        state = put_in(state.buffer, "")
+
+        handle_new_data(state)
     end
   end
 end
